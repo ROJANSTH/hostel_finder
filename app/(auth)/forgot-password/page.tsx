@@ -8,7 +8,8 @@ export default function ForgotPasswordPage() {
                 Forgot your password?
             </h1>
             <p className="mt-2 text-sm text-zinc-600">
-                Enter your account email to begin the password recovery flow.
+                Enter the email registered to your account. We will send a
+                short-lived reset code to that address.
             </p>
 
             <div className="mt-6">

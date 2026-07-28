@@ -1,14 +1,13 @@
 import { ApiResponse } from "@/lib/types/auth.types";
 import { Booking } from "@/lib/types/hostel.types";
-
-export interface PaymentRequest {
-    bookingId: string;
-    mobile: string;
-    pin: string;
-    otp: string;
-    outcome: "success" | "failure" | "random";
+export interface KhaltiInitiation {
+    pidx: string;
+    payment_url: string;
+    expires_at: string;
+    expires_in: number;
 }
 
 export interface PaymentService {
-    pay(request: PaymentRequest): Promise<ApiResponse<Booking>>;
+    initiate(bookingId: string): Promise<ApiResponse<KhaltiInitiation>>;
+    verify(bookingId: string, pidx: string): Promise<ApiResponse<Booking>>;
 }

@@ -2,7 +2,9 @@ import { ApiResponse, AuthData, User } from "@/lib/types/auth.types";
 import { authFormRequest, authRequest } from "@/lib/api/client";
 
 const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+    process.env.API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:5000/api/v1";
 
 async function publicRequest<T>(
     endpoint: string,
@@ -32,6 +34,20 @@ export async function loginUser(payload: {
     password: string;
 }): Promise<ApiResponse<AuthData>> {
     return publicRequest<AuthData>("/auth/login", payload);
+}
+
+export async function requestPasswordReset(payload: {
+    email: string;
+}): Promise<ApiResponse<null>> {
+    return publicRequest<null>("/auth/forgot-password", payload);
+}
+
+export async function resetAccountPassword(payload: {
+    email: string;
+    code: string;
+    newPassword: string;
+}): Promise<ApiResponse<null>> {
+    return publicRequest<null>("/auth/reset-password", payload);
 }
 
 export async function getCurrentUser(): Promise<ApiResponse<User>> {

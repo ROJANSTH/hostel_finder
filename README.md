@@ -46,9 +46,16 @@ The Profile page includes personal information, profile-image upload, and
 password management. `/password` remains as a compatibility redirect to the
 Profile password section.
 
-The `/forgot-password` route currently provides the frontend recovery
-experience. A production password-reset API and email delivery service must be
-connected before it can send real reset instructions.
+The `/forgot-password` route provides email-based account recovery. The backend
+generates a six-digit, single-use code, stores only its HMAC hash, and sends the
+code to the email stored on the matching user account. Codes expire after 10
+minutes, requests are throttled, failed attempts are limited, and a successful
+reset revokes existing sessions.
+
+Khalti payments use hosted Web Checkout. The backend initiates payment using
+the booking total in paisa, the browser redirects to Khalti, and the callback
+performs a server-side lookup before the booking is marked paid. Khalti PINs,
+OTPs, and secret keys are never collected by or sent to the frontend.
 
 ## Folder structure
 
@@ -59,7 +66,7 @@ hostel_finder/
 │   ├── (auth)/              # Login, registration and forgot-password pages
 │   ├── admin/               # Protected administration workspace
 │   ├── api/                 # Frontend route handlers and API proxies
-│   ├── bookings/            # Guest reservations and demo payment UI
+│   ├── bookings/            # Guest reservations and Khalti payment UI
 │   ├── dashboard/           # Authenticated guest overview
 │   ├── hostels/             # Search results and hostel details
 │   ├── notifications/       # User notification center
@@ -72,7 +79,7 @@ hostel_finder/
 ├── lib/
 │   ├── api/                 # Authenticated API request helpers
 │   ├── context/             # Authentication and locale providers
-│   ├── payments/            # Payment contract and Khalti demo adapter
+│   ├── payments/            # Payment contract and Khalti API adapter
 │   ├── schemas/             # Shared Zod validation schemas
 │   ├── types/               # TypeScript domain and response types
 │   └── utils/               # Image URL and presentation utilities
@@ -91,6 +98,30 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
 
 If omitted, the frontend uses the same local API URL by default. The backend
 must allow the frontend origin through its `CLIENT_URL` CORS setting.
+
+Configure Khalti only in `backend/.env`:
+
+```dotenv
+KHALTI_SECRET_KEY=replace-with-your-test-or-live-secret-key
+KHALTI_BASE_URL=https://dev.khalti.com/api/v2
+```
+
+Use the sandbox URL and test key together, or the production URL and live key
+together. Never expose `KHALTI_SECRET_KEY` through a `NEXT_PUBLIC_` variable.
+
+Password-reset delivery also requires backend SMTP settings:
+
+```dotenv
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-sender@gmail.com
+SMTP_PASS=your-google-app-password
+SMTP_FROM=Hostel Finder <your-sender@gmail.com>
+```
+
+For Gmail, use an App Password rather than the mailbox's normal password.
+Restart the backend after changing these values.
 
 ### Main scripts
 
