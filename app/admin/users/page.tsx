@@ -10,8 +10,10 @@ export default async function UsersPage({
     const page = query.page ? parseInt(query.page as string, 10) : 1;
     const limit = query.limit ? parseInt(query.limit as string, 10) : 10;
     const search = query.search ? (query.search as string) : "";
+    const role = query.role ? (query.role as string) : "";
+    const status = query.status ? (query.status as string) : "";
 
-    const result = await getAdminUsersAction({ page, limit, search });
+    const result = await getAdminUsersAction({ page, limit, search, role, status });
 
     if (!result.success) {
         return (
@@ -31,6 +33,8 @@ export default async function UsersPage({
             data={result.data || []}
             pagination={result.meta || { page: 1, limit: 10, total: 0, totalPages: 1 }}
             search={search}
+            role={role}
+            status={status}
         />
     );
 }

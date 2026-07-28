@@ -11,6 +11,7 @@ interface UserRow {
     name: string;
     email: string;
     role: string;
+    status: "active" | "suspended";
     createdAt: string;
 }
 
@@ -25,10 +26,14 @@ export default function UserTable({
     data,
     pagination,
     search,
+    role,
+    status,
 }: {
     data: UserRow[];
     pagination: Pagination;
     search: string;
+    role: string;
+    status: string;
 }) {
     const router = useRouter();
     const params = useSearchParams();
@@ -82,7 +87,7 @@ export default function UserTable({
                 </Link>
             </div>
 
-            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <form onSubmit={onSearch} className="flex w-full max-w-sm gap-2">
                     <input
                         name="search"
@@ -94,6 +99,7 @@ export default function UserTable({
                         Search
                     </button>
                 </form>
+                <div className="flex gap-2"><select value={role} onChange={(e)=>setQuery({role:e.target.value,page:1})} className="h-10 rounded-lg border px-3 text-sm"><option value="">All roles</option><option value="user">Users</option><option value="owner">Owners</option><option value="admin">Admins</option></select><select value={status} onChange={(e)=>setQuery({status:e.target.value,page:1})} className="h-10 rounded-lg border px-3 text-sm"><option value="">All statuses</option><option value="active">Active</option><option value="suspended">Suspended</option></select></div>
 
                 <label className="flex items-center gap-2 text-sm text-zinc-500">
                     Rows
@@ -116,6 +122,7 @@ export default function UserTable({
                             <th className="px-4 py-3 font-medium">Name</th>
                             <th className="px-4 py-3 font-medium">Email</th>
                             <th className="px-4 py-3 font-medium">Role</th>
+                            <th className="px-4 py-3 font-medium">Status</th>
                             <th className="px-4 py-3 font-medium">Created</th>
                             <th className="px-4 py-3 text-right font-medium">Actions</th>
                         </tr>
@@ -135,6 +142,7 @@ export default function UserTable({
                                             {u.role}
                                         </span>
                                     </td>
+                                    <td className="px-4 py-3"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${u.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>{u.status}</span></td>
                                     <td className="px-4 py-3 text-zinc-500">
                                         {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "—"}
                                     </td>
@@ -146,16 +154,17 @@ export default function UserTable({
                                             <Link href={`/admin/users/${u.id}/edit`} className="rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 transition hover:bg-zinc-50">
                                                 Edit
                                             </Link>
-                                            <button onClick={() => setTarget(u)} className="rounded-lg border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 transition hover:bg-red-50">
-                                                Delete
+                                            {u.status === "active" && <button onClick={() => setTarget(u)} className="rounded-lg border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 transition hover:bg-red-50">
+                                                Suspend
                                             </button>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={5} className="px-4 py-12 text-center text-zinc-400">No users found</td>
+                                <td colSpan={6} className="px-4 py-12 text-center text-zinc-400">No users found</td>
                             </tr>
                         )}
                     </tbody>
@@ -182,9 +191,9 @@ export default function UserTable({
                 </div>
             </div>
 
-            <Modal open={!!target} onClose={() => setTarget(null)} title="Delete user">
+            <Modal open={!!target} onClose={() => setTarget(null)} title="Suspend user">
                 <p className="mb-2 text-sm text-zinc-600">
-                    Are you sure you want to delete <span className="font-semibold text-zinc-900">{target?.name}</span>? This cannot be undone.
+                    Suspend <span className="font-semibold text-zinc-900">{target?.name}</span>? Their active sessions and API access will be blocked. You can reactivate them from Edit.
                 </p>
                 {deleteError && <p className="mb-3 text-sm text-red-500">{deleteError}</p>}
                 <div className="mt-5 flex justify-end gap-3">
@@ -192,7 +201,7 @@ export default function UserTable({
                         Cancel
                     </button>
                     <button onClick={onDelete} disabled={isPending} className="rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600 disabled:opacity-50">
-                        {isPending ? "Deleting..." : "Delete"}
+                        {isPending ? "Suspending..." : "Suspend"}
                     </button>
                 </div>
             </Modal>

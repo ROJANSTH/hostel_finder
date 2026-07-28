@@ -13,16 +13,22 @@ export async function getAdminUsersAction({
     page,
     limit,
     search,
+    role,
+    status,
 }: {
     page?: number;
     limit?: number;
     search?: string;
+    role?: string;
+    status?: string;
 }) {
     try {
         const result = await fetchAdminUsers({
             page: page && page > 0 ? page : 1,
             limit: limit && limit > 0 ? limit : 10,
             search: search || "",
+            role: role || "",
+            status: status || "",
         });
 
         if (result.success) {

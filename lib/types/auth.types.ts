@@ -4,6 +4,7 @@ export interface User {
     email: string;
     profileImage?: string | null;
     role: string;
+    status: "active" | "suspended";
     createdAt: string;
 }
 

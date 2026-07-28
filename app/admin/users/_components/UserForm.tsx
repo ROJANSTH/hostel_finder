@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createUserSchema, type CreateUserFormData } from "./schema";
+import { createUserSchema } from "./schema";
 import { createAdminUserAction } from "@/actions/admin.actions";
 
 const inputClass = "mt-1 w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-zinc-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200";
@@ -23,7 +23,7 @@ export default function UserForm() {
             name: fd.get("name") as string,
             email: fd.get("email") as string,
             password: fd.get("password") as string,
-            role: fd.get("role") as "user" | "admin",
+            role: fd.get("role") as "user" | "owner" | "admin",
         };
 
         const parsed = createUserSchema.safeParse(raw);
@@ -73,6 +73,7 @@ export default function UserForm() {
                 <label className="block text-sm font-medium text-zinc-700">Role</label>
                 <select name="role" defaultValue="user" className={inputClass}>
                     <option value="user">User</option>
+                    <option value="owner">Hostel owner</option>
                     <option value="admin">Admin</option>
                 </select>
             </div>

@@ -18,6 +18,7 @@ export default async function UserDetailPage({
         ["Name", user.name],
         ["Email", user.email],
         ["Role", user.role || "user"],
+        ["Status", user.status || "active"],
         ["Created", user.createdAt ? new Date(user.createdAt).toLocaleString() : "—"],
         ["Updated", user.updatedAt ? new Date(user.updatedAt).toLocaleString() : "—"],
     ];

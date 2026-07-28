@@ -12,6 +12,7 @@ interface UserData {
     name: string;
     email: string;
     role: string;
+    status: "active" | "suspended";
 }
 
 export default function UserFormEdit({ user }: { user: UserData }) {
@@ -29,7 +30,9 @@ export default function UserFormEdit({ user }: { user: UserData }) {
         const raw = {
             name: fd.get("name") as string,
             email: fd.get("email") as string,
-            role: fd.get("role") as "user" | "admin",
+            password: fd.get("password") as string,
+            role: fd.get("role") as "user" | "owner" | "admin",
+            status: fd.get("status") as "active" | "suspended",
         };
 
         const parsed = editUserSchema.safeParse(raw);
@@ -45,7 +48,9 @@ export default function UserFormEdit({ user }: { user: UserData }) {
 
         startTransition(async () => {
             try {
-                const result = await updateAdminUserAction(user.id, parsed.data);
+                const update = { ...parsed.data };
+                if (!update.password) delete update.password;
+                const result = await updateAdminUserAction(user.id, update);
                 if (!result.success) throw new Error(result.message);
                 router.push("/admin/users");
                 router.refresh();
@@ -74,9 +79,16 @@ export default function UserFormEdit({ user }: { user: UserData }) {
                 <label className="block text-sm font-medium text-zinc-700">Role</label>
                 <select name="role" defaultValue={user.role} className={inputClass}>
                     <option value="user">User</option>
+                    <option value="owner">Hostel owner</option>
                     <option value="admin">Admin</option>
                 </select>
             </div>
+            <div>
+                <label className="block text-sm font-medium text-zinc-700">Reset password (optional)</label>
+                <input name="password" type="password" autoComplete="new-password" placeholder="Leave blank to keep current password" className={inputClass} />
+                {fieldErrors.password && <p className="mt-1 text-xs text-red-500">{fieldErrors.password}</p>}
+            </div>
+            <div><label className="block text-sm font-medium text-zinc-700">Account status</label><select name="status" defaultValue={user.status} className={inputClass}><option value="active">Active</option><option value="suspended">Suspended</option></select></div>
             <button type="submit" disabled={isPending} className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60">
                 {isPending ? "Saving..." : "Save Changes"}
             </button>

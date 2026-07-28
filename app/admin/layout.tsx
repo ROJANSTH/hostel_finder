@@ -1,7 +1,11 @@
 import Sidebar from "./_components/Sidebar";
 import Header from "./_components/Header";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/api/auth.api";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+    const result = await getCurrentUser();
+    if (!result.success || result.data.role !== "admin") redirect("/dashboard");
     return (
         <div className="flex h-screen bg-zinc-50 text-zinc-700">
             <Sidebar />
