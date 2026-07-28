@@ -33,6 +33,7 @@ export default function ProfileForm({ user }: { user: User }) {
     useEffect(() => {
         if (state.success && state.user) {
             setUser(state.user);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setPreviewUrl(getProfileImageUrl(state.user.profileImage));
             refreshUser();
         }
