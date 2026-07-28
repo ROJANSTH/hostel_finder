@@ -40,7 +40,7 @@ export default function ProfileForm({ user }: { user: User }) {
     }, [state.success, state.user, setUser, refreshUser]);
 
     return (
-        <form action={formAction} className="space-y-5" encType="multipart/form-data" noValidate>
+        <form action={formAction} className="space-y-5" noValidate>
             <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
                 {previewUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element

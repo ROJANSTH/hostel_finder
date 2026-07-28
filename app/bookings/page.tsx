@@ -4,7 +4,7 @@ import DashboardShell from "@/components/DashboardShell";
 import { getBookings } from "@/lib/api/hostel.api";
 import { Booking } from "@/lib/types/hostel.types";
 import CancelButton from "./CancelButton";
-import KhaltiDemoPayment from "./KhaltiDemoPayment";
+import KhaltiPaymentButton from "./KhaltiPaymentButton";
 
 const statusStyles: Record<Booking["status"], string> = {
     pending: "bg-amber-50 text-amber-700 ring-amber-200",
@@ -61,7 +61,7 @@ function BookingCard({ booking }: { booking: Booking }) {
                         {hostel ? <Link href={`/hostels/${hostel._id}`} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800">View hostel →</Link> : <span />}
                         <div className="flex flex-wrap gap-2">
                             {booking.paymentMethod === "khalti" && booking.paymentStatus === "pending" && booking.status !== "cancelled" && (
-                                <KhaltiDemoPayment bookingId={booking._id} hostelName={hostel?.name ?? "Hostel booking"} amount={booking.totalPrice} />
+                                <KhaltiPaymentButton bookingId={booking._id} amount={booking.totalPrice} />
                             )}
                             {cancellable && <CancelButton id={booking._id} />}
                         </div>

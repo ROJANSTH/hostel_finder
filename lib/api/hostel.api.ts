@@ -2,7 +2,10 @@ import { authRequest } from "./client";
 import { ApiResponse } from "../types/auth.types";
 import { Booking, DashboardData, Hostel, Notification, Review } from "../types/hostel.types";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const API =
+    process.env.API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:5000/api/v1";
 export async function getHostels(query = ""): Promise<ApiResponse<Hostel[]>> {
     const response = await fetch(`${API}/hostels${query ? `?${query}` : ""}`, { cache: "no-store" });
     return response.json();

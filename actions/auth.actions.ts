@@ -4,12 +4,53 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { loginUser, registerUser } from "@/lib/api/auth.api";
 import {
+    requestPasswordReset,
+    resetAccountPassword,
+} from "@/lib/api/auth.api";
+import { z } from "zod";
+import {
     loginSchema,
     registerSchema,
 } from "@/app/(auth)/_components/schema";
 import { AuthActionState } from "@/lib/types/auth.types";
 
 const TOKEN_COOKIE = "auth_token";
+const recoveryEmailSchema = z.string().trim().toLowerCase().email();
+const resetCodeSchema = z.string().trim().regex(/^\d{6}$/);
+const resetPasswordSchema = z.string().min(6).max(100);
+
+export async function requestPasswordResetAction(
+    email: string
+): Promise<AuthActionState> {
+    const parsed = recoveryEmailSchema.safeParse(email);
+    if (!parsed.success) {
+        return { success: false, message: "Enter a valid email address." };
+    }
+    const response = await requestPasswordReset({ email: parsed.data });
+    return { success: response.success, message: response.message };
+}
+
+export async function resetPasswordWithCodeAction(payload: {
+    email: string;
+    code: string;
+    newPassword: string;
+}): Promise<AuthActionState> {
+    const email = recoveryEmailSchema.safeParse(payload.email);
+    const code = resetCodeSchema.safeParse(payload.code);
+    const password = resetPasswordSchema.safeParse(payload.newPassword);
+    if (!email.success || !code.success || !password.success) {
+        return {
+            success: false,
+            message: "Enter a valid email, six-digit code, and password of at least 6 characters.",
+        };
+    }
+    const response = await resetAccountPassword({
+        email: email.data,
+        code: code.data,
+        newPassword: password.data,
+    });
+    return { success: response.success, message: response.message };
+}
 
 export async function registerAction(
     _prevState: AuthActionState,
