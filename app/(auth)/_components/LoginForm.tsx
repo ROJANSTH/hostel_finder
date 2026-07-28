@@ -72,6 +72,14 @@ export default function LoginForm({
                     className="mt-1 w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-zinc-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                 />
                 <FieldError errors={state.fieldErrors?.password} />
+                <div className="mt-2 text-right">
+                    <Link
+                        href="/forgot-password"
+                        className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                        Forgot password?
+                    </Link>
+                </div>
             </div>
 
             {!state.success && state.message && !state.fieldErrors && (
