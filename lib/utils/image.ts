@@ -8,3 +8,4 @@ export function getProfileImageUrl(
     if (profileImage.startsWith("http")) return profileImage;
     return `${BACKEND_URL}${profileImage}`;
 }
+
