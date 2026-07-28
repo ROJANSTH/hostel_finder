@@ -1,6 +1,6 @@
 import { authRequest } from "@/lib/api/client";
 import { Booking } from "@/lib/types/hostel.types";
-import { PaymentRequest, PaymentService } from "./payment.service";
+import { PaymentService } from "./payment.service";
 
 export const khaltiDemoService: PaymentService = {
     async pay({ bookingId, ...payment }) {
