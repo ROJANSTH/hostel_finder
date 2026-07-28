@@ -10,19 +10,22 @@ import {
     profileUpdateSchema,
 } from "@/lib/schemas/user.schema";
 import { User, UserActionState } from "@/lib/types/auth.types";
+import { cookies } from "next/headers";
 
 export async function getCurrentUserAction(): Promise<{
     success: boolean;
     user?: User;
     message?: string;
+    hadSession?: boolean;
 }> {
+    const hadSession = Boolean((await cookies()).get("auth_token"));
     const response = await getCurrentUser();
 
     if (!response.success) {
-        return { success: false, message: response.message };
+        return { success: false, message: response.message, hadSession };
     }
 
-    return { success: true, user: response.data };
+    return { success: true, user: response.data, hadSession };
 }
 
 export async function updateProfileAction(
