@@ -6,6 +6,12 @@ import { usePathname } from "next/navigation";
 const NAV = [
     { href: "/admin", label: "Overview", exact: true },
     { href: "/admin/users", label: "Users" },
+    { href: "/admin/hostels", label: "Hostels" },
+    { href: "/admin/bookings", label: "Bookings" },
+    { href: "/admin/reviews", label: "Reviews" },
+    { href: "/admin/reports", label: "Reports" },
+    { href: "/admin/announcements", label: "Announcements" },
+    { href: "/admin/activity", label: "Activity log" },
 ];
 
 export default function Sidebar() {
